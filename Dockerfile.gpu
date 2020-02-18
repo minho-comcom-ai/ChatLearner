@@ -1,0 +1,22 @@
+FROM tensorflow/tensorflow:1.4.1-devel-gpu-py3
+
+WORKDIR /ChatLearner
+
+RUN pip3 install nltk
+RUN pip install "numpy<1.17"
+
+COPY --from=minhocomcomai/chatlearner-hugedata /Data Data
+COPY . .
+RUN python3 setnltk.py
+
+
+# RUN bash settingpath.sh
+ENV PYTHONPATH "${PYTHONPATH}:/ChatLearner"
+
+RUN python3 settings.py
+
+RUN python3 -m pip install flask
+
+EXPOSE 80
+LABEL AINIZE_MEMORY_REQUIREMENT=1Gi
+ENTRYPOINT python3 app.py
